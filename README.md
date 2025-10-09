@@ -4,8 +4,14 @@ code of the paper Cross-Layer Structure Information Fusion for Deep Multi-view C
 Running Code:
 python train.py --dataset BDGP
 
+
+
 --batch_size	Training batch size	256
+
+
 --mse_epochs	Pretraining (reconstruction) epochs	200
+
+
 --con_epochs	Contrastive training epochs	50 (reset automatically for BDGP)
 --learning_rate	Adam learning rate	0.0003
 --feature_dim	Latent feature dimension of AE	512
