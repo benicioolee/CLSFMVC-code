@@ -97,11 +97,35 @@ def inference(loader, model, device, view, data_size):
 def valid(model, device, dataset, view, data_size, class_num, eval_h=False):
     test_loader = DataLoader(
         dataset,
-        batch_size=data_size,  
+        batch_size=data_size,  # 一次性读全数据
         shuffle=False,
     )
 
-  
+    # if not eval_h:
+    #     # 由于部分数据集过大所以此处使用了两种聚类方法，其结果基本一致
+    #     # 1) 取出所有视图数据
+    #     views_all, labels_all, _ = next(iter(test_loader))
+    #     views_all = [v.to(device) for v in views_all]
+    #     # 2) 前向得到 W_fuse
+    #     model.eval()
+    #     with torch.no_grad():
+    #         z1s,z2s,z3s,zs,xrs,Z_L1,Z_L2,Z_L3,W1,W2,W3,W,W_fuse,q1s, q2s, q3s = model(views_all)
+    #     # 3) 构造稀疏邻接，做谱嵌入
+    #     idx = (W_fuse > 0).nonzero(as_tuple=False)
+    #     rows = idx[:, 0].cpu().numpy()
+    #     cols = idx[:, 1].cpu().numpy()
+    #     W_cpu = W_fuse.detach().cpu()
+    #     vals = W_cpu[rows, cols].numpy()
+    #     W_sparse = csr_matrix((vals, (rows, cols)), shape=(data_size, data_size))
+    #     # 4) 稀疏谱嵌入
+    #     embed = spectral_embedding(W_sparse, n_components=class_num, eigen_solver='arpack')
+    #     # 5) KMeans 聚类
+    #     km = KMeans(n_clusters=class_num, random_state=0)
+    #     preds = km.fit_predict(embed)
+    #     # 6) 评估并打印
+    #     labels = labels_all.cpu().numpy().reshape(-1)
+
+
     full_loader = DataLoader(dataset, batch_size=data_size, shuffle=False)
     views_all, labels_all, _ = next(iter(full_loader))
     views_all = [v.to(device) for v in views_all]
